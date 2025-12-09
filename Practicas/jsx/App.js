@@ -1,76 +1,82 @@
-import React, { Component } from "react";
-import {
-  StyleSheet,
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  ScrollView,
-  Dimensions,
-} from "react-native";
-import { Button } from "react-native-paper";
-const screenWidth = Dimensions.get("window").width;
-const images = [
-  "https://images.unsplash.com/photo-1513721032312-6a18a42c8763?w=152&h=152&fit=crop&crop=faces",
-  "https://images.unsplash.com/photo-1511765224389-37f0e77cf0eb?w=125&h=125&fit=crop",
-  "https://images.unsplash.com/photo-1497445462247-4330a224fdb1?w=125&h=125&fit=crop",
-  "https://images.unsplash.com/photo-1426604966848-d7adac402bff?w=125&h=125&fit=crop",
-  "https://images.unsplash.com/photo-1502630859934-b3b41d18206c?w=125&h=125&fit=crop",
-  "https://images.unsplash.com/photo-1515023115689-589c33041d3c?w=125&h=125&fit=crop",
-  "https://images.unsplash.com/photo-1504214208698-ea1916a2195a?w=125&h=125&fit=crop",
-  "https://images.unsplash.com/photo-1515814472071-4d632dbc5d4a?w=125&h=125&fit=crop",
-  "https://images.unsplash.com/photo-1511407397940-d57f68e81203?w=125&h=125&fit=crop",
-  "https://images.unsplash.com/photo-1518481612222-68bbe828ecd1?w=125&h=125&fit=crop",
-  "https://images.unsplash.com/photo-1505058707965-09a4469a87e4?w=125&h=125&fit=crop",
-  "https://images.unsplash.com/photo-1423012373122-fff0a5d28cc9?w=125&h=125&fit=crop",
+import { Component } from "react";
+import { StyleSheet, View, Text } from "react-native";
+import { TextInput } from "react-native-paper";
+
+const letras = [
+  "T",
+  "R",
+  "W",
+  "A",
+  "G",
+  "M",
+  "Y",
+  "F",
+  "P",
+  "D",
+  "X",
+  "B",
+  "N",
+  "J",
+  "Z",
+  "S",
+  "Q",
+  "V",
+  "H",
+  "L",
+  "C",
+  "K",
+  "E",
+  "T",
 ];
 
-const mostrarFotos = () => {
-  return images.map((value, index) => (
-    <Image
-      key={index.toString()}
-      style={styles.imagen}
-      source={{ uri: value }}
-    ></Image>
-  ));
+const calcularLetra = (numDocumento) => {
+  if (numDocumento.length <= 7) {
+    //4. Si borramos algún número del NIF, la letra ha de desaparecer.
+
+    return <Text style={styles.mostrarLetraContainerDefault}>Letra</Text>;
+  } else {
+    //5. Solo cuando tengamos 8 números en el campo de texto, se calculará la letra del NIF. Antes no.
+
+    let numDocumentoInteger = parseInt(numDocumento);
+    let resultado = numDocumentoInteger % 23;
+
+    return (
+      <Text style={styles.mostrarLetraContainer}>{letras[resultado]}</Text> //2. El campo de texto donde se mostrará la letra no será editable por el usuario.
+    );
+  }
 };
 
 export default class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      numeroNIE_DNI: "",
+    };
+  }
   render() {
     return (
       <View style={styles.container}>
-        <View style={styles.header}>
-          <View style={styles.profile_pic_section}>
-            <Image
-              style={styles.profile_pic}
-              source={{
-                uri: "https://plus.unsplash.com/premium_photo-1709579654090-3f3ca8f8416b?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8bmF0dXJhbGV6YSUyMHBhaXNhamV8ZW58MHx8MHx8fDA%3D",
-              }}
-            ></Image>
-          </View>
-          <View style={styles.account_info}>
-            <View style={styles.account_info_stats}>
-              <View style={styles.account_info_stats_sec1}>
-                <Text style={{ fontWeight: "bold" }}>Posts</Text>
-                <Text style={{ fontSize: 17 }}>20</Text>
-              </View>
-              <View style={styles.account_info_stats_sec2}>
-                <Text style={{ fontWeight: "bold" }}>Followers</Text>
-                <Text>110304</Text>
-              </View>
-              <View style={styles.account_info_stats_sec3}>
-                <Text style={{ fontWeight: "bold" }}>Following</Text>
-                <Text>1103</Text>
-              </View>
-            </View>
-            <View style={styles.account_info_edit}>
-              <Button mode="elevated" style={styles.editButton} disabled={true}>
-                Edit Profile
-              </Button>
-            </View>
-          </View>
+        <Text style={styles.estiloh1}>Calculador Letra NIF</Text>
+        <Text style={{ marginBottom: 25, color: "gray" }}>
+          App para calcular la letra del NIF:
+        </Text>
+        <View style={styles.contenidoApp}>
+          <TextInput
+            style={styles.textInput}
+            onChangeText={(newText) =>
+              this.setState({ numeroNIE_DNI: newText })
+            }
+            placeholder="NIF"
+            placeholderTextColor="red"
+            underlineColor="red"
+            activeUnderlineColor="red"
+            textColor="red"
+            defaultValue={this.state.numeroNIE_DNI}
+            maxLength={8} //1. Solo se podrán poner en el campo de texto 8 caracteres como máximo
+            keyboardType="numeric" //3. Cuando escribamos el NIF, el teclado virtual que nos aparecerá sólo mostrará números.
+          ></TextInput>
+          {calcularLetra(this.state.numeroNIE_DNI)}
         </View>
-        <View style={styles.body}>{mostrarFotos()}</View>
       </View>
     );
   }
@@ -81,67 +87,51 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "white",
     flexDirection: "column",
-    alignContent: "center",
-    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 200,
   },
-  header: {
-    flex: 0.15,
-    flexDirection: "row",
+  estiloh1: {
+    fontSize: 25,
+    color: "green",
+    marginBottom: 40,
+  },
+  contenidoApp: {
+    width: 250,
     height: 40,
-    margin: 1,
-  },
-
-  profile_pic_section: {
-    flex: 0.35,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  profile_pic: {
-    borderRadius: 100,
-    width: 100,
-    height: 100,
-  },
-
-  account_info: {
-    flex: 0.65,
-    flexDirection: "column",
-  },
-
-  account_info_stats: {
     flexDirection: "row",
-    flex: 0.5,
-    justifyContent: "space-evenly",
     alignItems: "center",
-  },
-
-  account_info_edit: {
-    flex: 0.5,
     justifyContent: "center",
-    alignItems: "center",
   },
-
-  editButton: {
-    borderRadius: 0,
-    width: 200,
+  textInput: {
+    height: 30,
+    width: 105,
+    borderRadius: 5,
+    backgroundColor: "transparent",
+    fontSize: 20,
+    borderWidth: 5,
+    borderBlockColor: "white",
+    borderRightColor: "white",
+    borderLeftColor: "white",
+    paddingHorizontal: 0,
   },
-
-  body: {
-    flex: 0.5,
-    flexDirection: "row",
-    flexWrap: "wrap",
-    borderRadius: 50,
-    margin: 1,
+  mostrarLetraContainer: {
+    width: 50,
+    height: 30,
+    fontSize: 20,
     justifyContent: "center",
-    alignItems: "center",
+    textAlignVertical: "center",
+    color: "green",
+    borderBottomWidth: 1,
+    borderBottomColor: "blue",
   },
-
-  imagen: {
-    width: 88,
-    height: 88,
-    marginTop: 2,
-    marginBottom: 1,
-    marginLeft: 2,
-    marginRight: 2,
+  mostrarLetraContainerDefault: {
+    width: 50,
+    height: 30,
+    fontSize: 20,
+    justifyContent: "center",
+    textAlignVertical: "center",
+    color: "blue",
+    borderBottomWidth: 1,
+    borderBottomColor: "blue",
   },
 });
